@@ -42,12 +42,37 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
-import React from "react"
-import ReactDOM from "react-dom/client";
-import App from "./App";
+import { StrictMode, Suspense } from "react";
+import App from "./App.tsx";
+import { RelayEnvironmentProvider } from "react-relay";
+import { Environment, Network, FetchFunction } from "relay-runtime";
 
-const reactRoot = document.getElementById("root");
-if (reactRoot) {
-  const root = ReactDOM.createRoot(reactRoot);
-  root.render(<App />);
-}
+const HTTP_ENDPOINT = "/api";
+
+const fetchGraphQL = async (request, variables) => {
+  const resp = await fetch(HTTP_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: request.text, variables }),
+  });
+  if (!resp.ok) {
+    throw new Error("Response failed.");
+  }
+  return await resp.json();
+};
+
+const environment = new Environment({
+  network: Network.create(fetchGraphQL),
+});
+
+const root = ReactDOM.createRoot(document.getElementById("root")).render(
+  <StrictMode>
+    <RelayEnvironmentProvider environment={environment}>
+      <Suspense fallback="Loading...">
+        <App />
+      </Suspense>
+    </RelayEnvironmentProvider>
+  </StrictMode>
+);
+
+root.render(<App />);
