@@ -3,9 +3,7 @@ import Todo from './components/Todo'
 
 const App = () => {
   return (
-    <div class='bg-blue-800'>
-      Todo List Application
-
+    <div className='mt-16 flex items-center justify-center'>
       <Todo />
     </div>
   )

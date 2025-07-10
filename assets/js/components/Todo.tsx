@@ -32,7 +32,7 @@ const Todo = () => {
     <div>
       <ul className='bg-blue-700'>
         {todoItems.map((item, index) => (
-          <li key={index} className="text-3xl font-bold underline">{item.content}</li>
+          <li key={index} className="text-3xl font-bold underline">- {item.content}</li>
         ))}
       </ul>
     </div>
