@@ -42,3 +42,12 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+import React from "react"
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const reactRoot = document.getElementById("root");
+if (reactRoot) {
+  const root = ReactDOM.createRoot(reactRoot);
+  root.render(<App />);
+}
