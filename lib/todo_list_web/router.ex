@@ -21,9 +21,14 @@ defmodule TodoListWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", TodoListWeb do
-  #   pipe_through :api
-  # end
+  scope "/api" do
+    pipe_through :api
+
+    get "/", Absinthe.Plug.GraphiQL,
+      schema: TodoListWeb.Api.Schema, interface: :playground
+
+    post "/", Absinthe.Plug, schema: TodoListWeb.Api.Schema
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:todo_list, :dev_routes) do
