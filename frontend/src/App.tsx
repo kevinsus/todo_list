@@ -1,5 +1,4 @@
 import React from 'react'
-import './App.css'
 
 import type { AppQuery } from "./__generated__/AppQuery.graphql";
 import { graphql, useLazyLoadQuery } from "react-relay";
@@ -25,7 +24,9 @@ function App() {
 
   return (
     <div>
-      Hello World
+      <h1 className="text-3xl font-bold underline">
+        Hello world!
+      </h1>
     </div>
   )
 }

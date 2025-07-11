@@ -26,9 +26,11 @@ const environment = new Environment({
 });
 
 createRoot(document.getElementById('root')!).render( 
-  <RelayEnvironmentProvider environment={environment}>
-    <StrictMode>
-      <App />
-    </StrictMode>
-  </RelayEnvironmentProvider>
+  <StrictMode>
+    <RelayEnvironmentProvider environment={environment}>
+      <Suspense fallback={<div>Loading...</div>}>
+        <App />
+      </Suspense>
+    </RelayEnvironmentProvider>
+  </StrictMode>,
 )
