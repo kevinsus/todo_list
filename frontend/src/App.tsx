@@ -3,8 +3,13 @@ import React from 'react'
 import type { AppQuery } from "./__generated__/AppQuery.graphql";
 import { graphql, useLazyLoadQuery } from "react-relay";
 
-function App() {
+interface todoItem {
+  id: string,
+  content: string,
+  isCompleted: boolean
+}
 
+function App() {
   const data = useLazyLoadQuery<AppQuery>(
     graphql`
       query AppQuery {
@@ -20,13 +25,14 @@ function App() {
     {}
   );
 
-  console.log(data)
+  const todoLists = data.todoItems
+
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
+    <div className='bg-black min-h-screen text-white'>
+      {todoLists?.map((item) => (
+        <li key={item!.id}>{item!.content}</li>
+      ))}
     </div>
   )
 }
