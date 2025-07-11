@@ -90,7 +90,6 @@ defmodule TodoListWeb.Api.Schema do
     Two cases:
       - completed_at has time -> remove the time (set to nil)
       - completed_at is nil -> add the current time
-
     """
 
     field :toggle_todo_item, non_null(:todo_item) do
