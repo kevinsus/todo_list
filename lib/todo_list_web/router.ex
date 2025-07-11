@@ -21,7 +21,7 @@ defmodule TodoListWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  scope "/api" do
+  scope "/graphql" do
     pipe_through :api
 
     get "/", Absinthe.Plug.GraphiQL,

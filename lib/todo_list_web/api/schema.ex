@@ -7,7 +7,7 @@ defmodule TodoListWeb.Api.Schema do
   use Absinthe.Schema
 
   object :todo_item do
-    field :id, non_null(:integer)
+    field :id, non_null(:string)
     field :content, non_null(:string)
     field :is_completed, non_null(:boolean) do
       resolve (fn item, _, _ ->
@@ -50,7 +50,7 @@ defmodule TodoListWeb.Api.Schema do
 
     # TODO: Deleting todo item
     field :delete_todo_item, non_null(:boolean) do
-      arg :id, non_null(:integer)
+      arg :id, non_null(:string)
 
       # get the item from id, then delete the item using the item
       resolve (fn item, _ ->
@@ -68,7 +68,7 @@ defmodule TodoListWeb.Api.Schema do
 
     # TODO: Updating todo item's content
     field :update_todo_item, non_null(:boolean) do
-      arg :id, non_null(:integer)
+      arg :id, non_null(:string)
       arg :content, non_null(:string)
 
       resolve(fn item, _ ->
@@ -94,7 +94,7 @@ defmodule TodoListWeb.Api.Schema do
     """
 
     field :toggle_todo_item, non_null(:todo_item) do
-      arg :id, non_null(:integer)
+      arg :id, non_null(:string)
 
       resolve (fn item,_ ->
         Todos.toggle_item_by_id(item.id)

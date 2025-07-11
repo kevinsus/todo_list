@@ -1,5 +1,0 @@
-{
-  "schema": "../lib/todo_list_web/api/schema.ex",
-  "src": "./",
-  "language": "typescript"
-}

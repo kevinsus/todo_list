@@ -1,28 +1,28 @@
 import React from 'react'
 import Todo from './components/Todo'
 
-import { AppQuery } from "./__generated__/AppQuery.graphql";
-import { graphql, useLazyLoadQuery } from "react-relay";
+// import { gql } from "apollo-boost"
+// import { useQuery } from "@apollo/react-hooks"
 
 const App = () => {
-  const data = useLazyLoadQuery<AppQuery>(
-    graphql`
-      query AppQuery {
-        todoItems {
-          id,
-          content,
-          isCompleted
-        }
-      }
-    `,
-    {}
-  );
-
-  console.log(data)
+  // const { data, loading } = useQuery(gql`
+  //   {
+  //     todoItens {
+  //       id content isCompleted
+  //     }
+  //   }
+  // `)
 
   return (
-    <div className='mt-16 flex items-center justify-center'>
+    <div>
+      <h1>Star Wars Films</h1>
       <Todo />
+      {/* <ul>
+        {data?.todoItems ? data.todoItems.map((item) => (
+          <li key={item.id}>{item.content}</li>
+        )) : null}
+        {loading && <p>Loading...</p>}
+      </ul> */}
     </div>
   )
 }

@@ -42,37 +42,65 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
-import { StrictMode, Suspense } from "react";
-import App from "./App.tsx";
-import { RelayEnvironmentProvider } from "react-relay";
-import { Environment, Network, FetchFunction } from "relay-runtime";
+import React from "react"
+import ReactDOM from "react-dom/client";
+import App from "./App";
 
-const HTTP_ENDPOINT = "/api";
+const reactRoot = document.getElementById("root");
+if (reactRoot) {
+    const root = ReactDOM.createRoot(reactRoot);
+    root.render(<App />);
+}
+  
+// import React from "react"
+// import ReactDOM from "react-dom/client";
+// import App from "./App";
+// import { RelayEnvironmentProvider } from "react-relay";
+// import { Environment, Network } from "relay-runtime";
 
-const fetchGraphQL = async (request, variables) => {
-  const resp = await fetch(HTTP_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: request.text, variables }),
-  });
-  if (!resp.ok) {
-    throw new Error("Response failed.");
-  }
-  return await resp.json();
-};
+// const HTTP_ENDPOINT = "/api";
 
-const environment = new Environment({
-  network: Network.create(fetchGraphQL),
-});
+// const fetchGraphQL = async (request, variables) => {
+//   const resp = await fetch(HTTP_ENDPOINT, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ query: request.text, variables }),
+//   });
+//   if (!resp.ok) {
+//     throw new Error("Response failed.");
+//   }
+//   return await resp.json();
+// };
 
-const root = ReactDOM.createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <RelayEnvironmentProvider environment={environment}>
-      <Suspense fallback="Loading...">
-        <App />
-      </Suspense>
-    </RelayEnvironmentProvider>
-  </StrictMode>
-);
+// const environment = new Environment({
+//   network: Network.create(fetchGraphQL),
+// });
 
-root.render(<App />);
+// const reactRoot = document.getElementById("root");
+// if (reactRoot) {
+//   const root = ReactDOM.createRoot(reactRoot);
+//   root.render(
+//     <RelayEnvironmentProvider environment={environment}>
+//       <App />
+//     </RelayEnvironmentProvider>
+//   );
+// }
+
+// import React from "react"
+// import ReactDOM from "react-dom/client";
+// import App from "./App";
+
+// import { ApolloProvider } from "@apollo/react-hooks"
+// import ApolloClient from "apollo-boost"
+
+// const client = new ApolloClient({ uri: "/api" })
+
+// const reactRoot = document.getElementById("root");
+// if (reactRoot) {
+//   const root = ReactDOM.createRoot(reactRoot);
+//   root.render(
+//     <ApolloProvider client={client}>
+//       <App />
+//     </ApolloProvider>
+//   );
+// }
