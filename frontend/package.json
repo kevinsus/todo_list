@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "get-graphql-schema": "^2.1.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-relay": "^20.0.0",
