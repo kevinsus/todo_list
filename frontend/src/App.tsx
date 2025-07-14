@@ -16,6 +16,8 @@ import { Input } from "./components/ui/input"
 import {
   TableBody,
   TableCell,
+  TableHead,
+  TableHeader,
   TableRow,
 } from "./components/ui/table"
 import { Checkbox } from "./components/ui/checkbox"
@@ -239,8 +241,18 @@ function App() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
-          <table className='w-full'>
+        <CardContent className='overflow-auto'>
+          <table className='w-full '>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-100">
+                  <Checkbox />
+                  Lists
+                </TableHead>
+                <TableHead>Edit</TableHead>
+                <TableHead>Delete</TableHead>
+              </TableRow>
+            </TableHeader>
             <TableBody>
               {todoLists?.map((item) => (
                 <TableRow key={item!.id} className='w-full flex justify-between w-full' >
@@ -250,7 +262,7 @@ function App() {
                         <Input ref={editItemRef} placeholder={item?.content} className='w-100' />
                       </TableCell>
                       <TableCell className='flex gap-2'>
-                        <Button type='submit' onClick={() => handleEditTodo(item!)}>Finish Task</Button>
+                        <Button type='submit' onClick={() => handleEditTodo(item!)}>Enter</Button>
                       </TableCell>
                     </>
                   ) :
