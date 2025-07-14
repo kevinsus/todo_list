@@ -100,8 +100,5 @@ defmodule TodoListWeb.Api.Schema do
         end
       end)
     end
-
-
   end
-
 end

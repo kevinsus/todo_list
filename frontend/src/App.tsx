@@ -102,7 +102,16 @@ function App() {
   );
   const handleDeleteTodo = (item: itemData) => {
     commitDeleteMutation({
-      variables: { id: item.id},
+      variables: { id: item.id },
+      optimisticResponse: {
+        deleteTodoItem: item.id,
+      },
+      updater: (store) => {
+        const root = store.getRoot();
+        const todoItems = root.getLinkedRecords("todoItems") || [];
+        const updatedItems = todoItems.filter(todo => todo.getDataID() !== item.id);
+        root.setLinkedRecords(updatedItems, "todoItems");
+      },
       onCompleted: () => {
         console.log("Todo item deleted successfully");
       },
