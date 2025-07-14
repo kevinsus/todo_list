@@ -107,18 +107,11 @@ defmodule TodoList.Todos do
   Returns an `nil` when no items found.
 
   """
-  def toggle_item(%Item{} = item) do
-    update_item(item, %{completed_at: nil})
-  end
-
-  def toggle_item(%Item{completed_at: nil} = item) do
-    update_item(item, %{completed_at: DateTime.utc_now()})
-  end
-
-  def toggle_item_by_id(item_id) when is_integer(item_id) do
+  def toggle_item_by_id(item_id) do
     case Repo.get(Item, item_id) do
       nil -> {:ok, nil}
-      %Item{} = item -> toggle_item(item)
+      %Item{completed_at: nil} = item -> update_item(item, %{completed_at: DateTime.utc_now()})
+      %Item{} = item -> update_item(item, %{completed_at: nil})
     end
   end
 end

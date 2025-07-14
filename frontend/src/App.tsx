@@ -5,7 +5,7 @@ import { graphql, useLazyLoadQuery, useMutation } from "react-relay";
 
 import {
   Card,
-  CardAction,
+  // CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -18,9 +18,16 @@ import {
   TableCell,
   TableRow,
 } from "./components/ui/table"
+import { Checkbox } from "./components/ui/checkbox"
 
 import { MdDelete } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
+
+interface itemData {
+  id: string;
+  content: string;
+  isCompleted: boolean;
+}
 
 function App() {
   // RELAY -> Handle Queries (READ)
@@ -93,7 +100,7 @@ function App() {
       }
     `
   );
-  const handleDeleteTodo = (item: any) => {
+  const handleDeleteTodo = (item: itemData) => {
     commitDeleteMutation({
       variables: { id: item.id},
       onCompleted: () => {
@@ -106,7 +113,7 @@ function App() {
   }
 
   // RELAY -> handle Update
-  const [editId, setIsEditing] = React.useState(null)
+  const [editId, setIsEditing] = React.useState("")
   const editItemRef = React.useRef<HTMLInputElement>(null)
   
   const [commitEditMutation] = useMutation(
@@ -120,14 +127,14 @@ function App() {
       }
     `
   )
-  const handleEditTodo = (item: any) => {
-    if (!editId) { 
+  const handleEditTodo = (item: itemData) => {
+    if (editId === "") { 
       // Editing
       setIsEditing(item.id)
     } else {
       // Submit
       if (!editItemRef.current || editItemRef.current.value === "") {
-        setIsEditing(null)
+        setIsEditing("")
         return
       }
       const editItem = editItemRef.current.value;
@@ -159,13 +166,53 @@ function App() {
         },
       })
 
-      setIsEditing(null)
+      setIsEditing("")
     }
 
   }
 
-  const handleAuthenticate = () => {
-    // 
+  // RELAY -> handle toggle
+  const [commitToggleMutation] = useMutation(
+    graphql`
+      mutation AppToggleMutation($id: String!) {
+        toggleTodoItem(id: $id) {
+          id
+          content
+          isCompleted
+        }
+      }
+    `
+  )
+  const handleToggleTodo = (item: itemData) => {
+    // checked
+    commitToggleMutation({
+      variables: { id: item.id },
+      optimisticResponse: {
+        toggleTodoItem: {
+          id: item.id,
+          content: item.content,
+          isCompleted: item.isCompleted,
+        },
+      },
+      updater: (store) => {
+        const root = store.getRoot();
+        const todoItems = root.getLinkedRecords("todoItems") || [];
+        const toggledTodoItem = store.getRootField("toggleTodoItem");
+        if (!toggledTodoItem) return;
+        // the function below updates the todoItems list
+        // by replacing the toggled item with the updated one
+        const updatedItems = todoItems.map((todo) => 
+          todo.getDataID() === toggledTodoItem.getDataID() ? toggledTodoItem : todo
+        );
+        root.setLinkedRecords(updatedItems, "todoItems");
+      },
+      onCompleted: () => {
+        console.log("Todo item updated completion successfully");
+      },
+      onError: (error) => {
+        console.error("Error updating completion todo item:", error);
+      },
+    })
   }
 
   return (
@@ -175,7 +222,7 @@ function App() {
         <CardHeader>
           <CardTitle>Welcome back!</CardTitle>
           <CardDescription>Here's a list of your tasks for this month.</CardDescription>
-          <CardAction><Button onClick={() => handleAuthenticate()}>Sign In</Button></CardAction>
+          {/* <CardAction><Button onClick={() => handleAuthenticate()}>Sign In</Button></CardAction> */}
           <div className="flex w-full max-w-sm items-center gap-2 mt-5">
             <Input type="text" placeholder="Insert Todo" ref={contentItemRef} />
             <Button type="submit" onClick={() => handleCreateTodo()} >
@@ -194,15 +241,22 @@ function App() {
                         <Input ref={editItemRef} placeholder={item?.content} className='w-100' />
                       </TableCell>
                       <TableCell className='flex gap-2'>
-                        <Button type='submit' onClick={() => handleEditTodo(item)}>Finish Task</Button>
+                        <Button type='submit' onClick={() => handleEditTodo(item!)}>Finish Task</Button>
                       </TableCell>
                     </>
                   ) :
                     <>
-                      <TableCell>{item!.content}</TableCell>
+                      <TableCell>
+                        <Checkbox
+                          defaultChecked={!!item?.isCompleted}
+                          onCheckedChange={() => handleToggleTodo(item!)}
+                          className='mr-3 border-gray-600'
+                        />
+                        {item?.content}
+                      </TableCell>
                       <TableCell className='flex gap-2'>
-                        <FaRegEdit className='hover: cursor-pointer' onClick={() => handleEditTodo(item)} />
-                        <MdDelete className='hover: cursor-pointer' onClick={() => handleDeleteTodo(item)} />
+                        <FaRegEdit className='hover: cursor-pointer' onClick={() => handleEditTodo(item!)} />
+                        <MdDelete className='hover: cursor-pointer' onClick={() => handleDeleteTodo(item!)} />
                       </TableCell>
                     </>
                   }

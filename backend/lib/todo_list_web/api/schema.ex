@@ -94,7 +94,10 @@ defmodule TodoListWeb.Api.Schema do
       arg :id, non_null(:string)
 
       resolve (fn item,_ ->
-        Todos.toggle_item_by_id(item.id)
+        case Todos.toggle_item_by_id(item.id) do
+          {:ok, item_response} -> {:ok, item_response}
+          _ -> {:error, "error! unable to toggle items"}
+        end
       end)
     end
 
