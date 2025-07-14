@@ -8,19 +8,14 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "./components/ui/card"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
 import {
-  Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableHead,
-  TableHeader,
   TableRow,
 } from "./components/ui/table"
 
@@ -58,7 +53,6 @@ function App() {
       }
     `
   );
-  // Handle Todo Client Items
   const contentItemRef = React.useRef<HTMLInputElement>(null) // allow value to be cleared
   const handleCreateTodo = () => {
     const contentItem = contentItemRef.current?.value ?? "";
@@ -82,14 +76,15 @@ function App() {
 
       onCompleted: () => {
         console.log("Todo item created successfully");
-        },
+        contentItemRef.current!.value = ""
+      },
       onError: (error) => { 
         console.log("Error deleting todo item:", error)
       },
     });
   }
 
-  
+
   // RELAY -> handle Delete
   const [commitDeleteMutation] = useMutation(
     graphql`
@@ -108,25 +103,65 @@ function App() {
         console.error("Error deleting todo item:", error);
       },
     });
-    window.location.reload()
   }
 
   // RELAY -> handle Update
-  const [isEditing, setIsEditing] = React.useState(false)
-  // const [commitEditMutation] = useMutation(
-  //   graphql`
-  //     mutation AppEditMutation($id: String!, $content: String!) {
-  //       updateTodoItem(id: $id, content: $content)
-  //     }
-  //   `
-  // )
+  const [editId, setIsEditing] = React.useState(null)
+  const editItemRef = React.useRef<HTMLInputElement>(null)
+  
+  const [commitEditMutation] = useMutation(
+    graphql`
+      mutation AppEditMutation($id: String!, $content: String!) {
+        updateTodoItem(id: $id, content: $content) {
+          id
+          content
+          isCompleted
+        }
+      }
+    `
+  )
+  const handleEditTodo = (item: any) => {
+    if (!editId) { 
+      // Editing
+      setIsEditing(item.id)
+    } else {
+      // Submit
+      if (!editItemRef.current || editItemRef.current.value === "") {
+        setIsEditing(null)
+        return
+      }
+      const editItem = editItemRef.current.value;
+      
+      commitEditMutation({
+        variables: { id: item.id, content: editItem },
+        optimisticResponse: {
+          updateTodoItem: {
+            id: item.id,
+            content: editItem,
+            isCompleted: item.isCompleted,
+          },
+        },
+        updater: (store) => {
+          const root = store.getRoot();
+          const todoItems = root.getLinkedRecords("todoItems") || [];
+          const updatedTodoItem = store.getRootField("updateTodoItem");
+          if (!updatedTodoItem) return;
+          const updatedItems = todoItems.map((todo) => 
+            todo.getDataID() === updatedTodoItem.getDataID() ? updatedTodoItem : todo
+          );
+          root.setLinkedRecords(updatedItems, "todoItems");
+        },
+        onCompleted: () => {
+          console.log("Todo item updated successfully");
+        },
+        onError: (error) => {
+          console.error("Error updating todo item:", error);
+        },
+      })
 
-  const handleEditTodo = (item: any, content: string) => {
-    // commitEditMutation({
-    //   variables: {id: item.id, content: content},
-    //   onCompleted: () => console.log("Successfully Updated the task"),
-    //   onError: (error) => console.log("Error: ", error)
-    // })
+      setIsEditing(null)
+    }
+
   }
 
   const handleAuthenticate = () => {
@@ -149,23 +184,33 @@ function App() {
           </div>
         </CardHeader>
         <CardContent>
-          <table>
+          <table className='w-full'>
             <TableBody>
               {todoLists?.map((item) => (
-                <TableRow key={item!.id} className='flex justify-between w-full' >
-                  <TableCell>{item!.content}</TableCell>
-                  <TableCell className='flex gap-2'>
-                    <FaRegEdit className='hover: cursor-pointer' onClick={() => handleEditTodo(item, item?.isCompleted)} />
-                    <MdDelete className='hover: cursor-pointer' onClick={() => handleDeleteTodo(item)} />
-                  </TableCell>
+                <TableRow key={item!.id} className='w-full flex justify-between w-full' >
+                  { editId === item!.id ? (
+                    <>
+                      <TableCell>
+                        <Input ref={editItemRef} placeholder={item?.content} className='w-100' />
+                      </TableCell>
+                      <TableCell className='flex gap-2'>
+                        <Button type='submit' onClick={() => handleEditTodo(item)}>Finish Task</Button>
+                      </TableCell>
+                    </>
+                  ) :
+                    <>
+                      <TableCell>{item!.content}</TableCell>
+                      <TableCell className='flex gap-2'>
+                        <FaRegEdit className='hover: cursor-pointer' onClick={() => handleEditTodo(item)} />
+                        <MdDelete className='hover: cursor-pointer' onClick={() => handleDeleteTodo(item)} />
+                      </TableCell>
+                    </>
+                  }
                 </TableRow>
               ))}
             </TableBody>
           </table>
         </CardContent>
-        {/* <CardFooter>
-          <p>Card Footer</p>
-        </CardFooter> */}
       </Card>
     </div>
   )

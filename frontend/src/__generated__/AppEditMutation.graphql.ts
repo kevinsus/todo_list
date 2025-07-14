@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ac94eb9d6e58e250078a5f0463b42fcb>>
+ * @generated SignedSource<<308cb1d01bbdbe96225999f1ab19935e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,11 @@ export type AppEditMutation$variables = {
   id: string;
 };
 export type AppEditMutation$data = {
-  readonly updateTodoItem: boolean;
+  readonly updateTodoItem: {
+    readonly content: string;
+    readonly id: string;
+    readonly isCompleted: boolean;
+  };
 };
 export type AppEditMutation = {
   response: AppEditMutation$data;
@@ -47,8 +51,33 @@ v2 = [
         "variableName": "id"
       }
     ],
-    "kind": "ScalarField",
+    "concreteType": "TodoItem",
+    "kind": "LinkedField",
     "name": "updateTodoItem",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "content",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "isCompleted",
+        "storageKey": null
+      }
+    ],
     "storageKey": null
   }
 ];
@@ -76,16 +105,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "6f78438313d1f24835b7a953562503ac",
+    "cacheID": "f77dcbea5c6291edded1be305941d45e",
     "id": null,
     "metadata": {},
     "name": "AppEditMutation",
     "operationKind": "mutation",
-    "text": "mutation AppEditMutation(\n  $id: String!\n  $content: String!\n) {\n  updateTodoItem(id: $id, content: $content)\n}\n"
+    "text": "mutation AppEditMutation(\n  $id: String!\n  $content: String!\n) {\n  updateTodoItem(id: $id, content: $content) {\n    id\n    content\n    isCompleted\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2ee6db96b425f2490ffc04b58662151a";
+(node as any).hash = "d3298659ef2e6a58ee5cbf9b26bb9a22";
 
 export default node;
