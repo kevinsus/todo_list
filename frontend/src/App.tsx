@@ -11,11 +11,21 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+} from "./components/ui/card"
+import { Button } from "./components/ui/button"
+import { Input } from "./components/ui/input"
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./components/ui/table"
 
 import { MdDelete } from "react-icons/md";
+import { FaRegEdit } from "react-icons/fa";
 
 function App() {
   // RELAY -> Handle Queries (READ)
@@ -35,32 +45,52 @@ function App() {
   const todoLists = data.todoItems
   
   // RELAY -> handle Creates
+  // use useMutation API to execute a mutation
+  // returns a tuple of items (callback) - commitMutation
   const [commitCreateMutation] = useMutation(
     graphql`
       mutation AppCreateMutation($content: String!) {
-        createTodoItem(content: $content)
+        createTodoItem(content: $content) {
+          id
+          content
+          isCompleted
+        }
       }
     `
   );
-
   // Handle Todo Client Items
-  const [contentItem, setContentItem] = React.useState("")
+  const contentItemRef = React.useRef<HTMLInputElement>(null) // allow value to be cleared
   const handleCreateTodo = () => {
-    // submit the mutation changes
+    const contentItem = contentItemRef.current?.value ?? "";
+    
+    // commitMutation = interface which allow us to write data to RELAY
     commitCreateMutation({
       variables: { content: contentItem },
+      optimisticResponse: {
+        createTodoItem: {
+          id: Math.random().toString(36), // random ID
+          content: contentItem,
+          isCompleted: false,
+        },
+      },
+      updater: (store) => {
+        const root = store.getRoot();
+        const todoItems = root.getLinkedRecords("todoItems") || [];
+        const newTodoItem = store.getRootField("createTodoItem");
+        root.setLinkedRecords([...todoItems, newTodoItem], "todoItems");
+      },
+
       onCompleted: () => {
         console.log("Todo item created successfully");
-      },
-      onError: (error) => {
+        },
+      onError: (error) => { 
         console.log("Error deleting todo item:", error)
       },
     });
-    setContentItem(""); // Clear input after mutation
   }
 
+  
   // RELAY -> handle Delete
-  // How the delete mutation will be able to differentiate with other mutations
   const [commitDeleteMutation] = useMutation(
     graphql`
       mutation AppDeleteMutation($id: String!) {
@@ -78,8 +108,29 @@ function App() {
         console.error("Error deleting todo item:", error);
       },
     });
-    setContentItem(""); // Clear input after mutation
     window.location.reload()
+  }
+
+  // RELAY -> handle Update
+  const [isEditing, setIsEditing] = React.useState(false)
+  // const [commitEditMutation] = useMutation(
+  //   graphql`
+  //     mutation AppEditMutation($id: String!, $content: String!) {
+  //       updateTodoItem(id: $id, content: $content)
+  //     }
+  //   `
+  // )
+
+  const handleEditTodo = (item: any, content: string) => {
+    // commitEditMutation({
+    //   variables: {id: item.id, content: content},
+    //   onCompleted: () => console.log("Successfully Updated the task"),
+    //   onError: (error) => console.log("Error: ", error)
+    // })
+  }
+
+  const handleAuthenticate = () => {
+    // 
   }
 
   return (
@@ -89,25 +140,32 @@ function App() {
         <CardHeader>
           <CardTitle>Welcome back!</CardTitle>
           <CardDescription>Here's a list of your tasks for this month.</CardDescription>
-          <CardAction>Action</CardAction>
-          <form className="flex w-full max-w-sm items-center gap-2 mt-5">
-            <Input type="text" placeholder="Insert Todo" onChange={(e:any) => setContentItem(e.target.value)} />
+          <CardAction><Button onClick={() => handleAuthenticate()}>Sign In</Button></CardAction>
+          <div className="flex w-full max-w-sm items-center gap-2 mt-5">
+            <Input type="text" placeholder="Insert Todo" ref={contentItemRef} />
             <Button type="submit" onClick={() => handleCreateTodo()} >
               Add Task
             </Button>
-          </form>
+          </div>
         </CardHeader>
         <CardContent>
-          {todoLists?.map((item) => (
-            <div key={item!.id} className='hover: cursor-pointer flex justify-between' >
-              <p>{item!.content}</p>
-              <MdDelete onClick={() => handleDeleteTodo(item)} />
-            </div>
-          ))}
+          <table>
+            <TableBody>
+              {todoLists?.map((item) => (
+                <TableRow key={item!.id} className='flex justify-between w-full' >
+                  <TableCell>{item!.content}</TableCell>
+                  <TableCell className='flex gap-2'>
+                    <FaRegEdit className='hover: cursor-pointer' onClick={() => handleEditTodo(item, item?.isCompleted)} />
+                    <MdDelete className='hover: cursor-pointer' onClick={() => handleDeleteTodo(item)} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </table>
         </CardContent>
-        <CardFooter>
+        {/* <CardFooter>
           <p>Card Footer</p>
-        </CardFooter>
+        </CardFooter> */}
       </Card>
     </div>
   )

@@ -35,15 +35,13 @@ defmodule TodoListWeb.Api.Schema do
 
   mutation do
     # Creating todo item
-    field :create_todo_item, non_null(:boolean) do
+    field :create_todo_item, non_null(:todo_item) do
       arg :content, non_null(:string)
 
       resolve (fn item, _ ->
         case Todos.create_item(%{content: item.content}) do
-          # if item is created successfully, it should have response of {:ok, item} and {:error, reason}, but we want true or false
-          # Hence this syntax ensure that it returns true or false only
-          {:ok, _} -> {:ok, true}
-          _ -> {:ok, false}
+          {:ok, item} -> {:ok, item}
+          _ -> {:error, "error! unable to create todo item"}
         end
       end)
     end
@@ -67,7 +65,7 @@ defmodule TodoListWeb.Api.Schema do
     end
 
     # TODO: Updating todo item's content
-    field :update_todo_item, non_null(:boolean) do
+    field :update_todo_item, non_null(:todo_item) do
       arg :id, non_null(:string)
       arg :content, non_null(:string)
 
@@ -75,10 +73,10 @@ defmodule TodoListWeb.Api.Schema do
         case Todos.get_item!(item.id) do
           %Todos.Item{} = todo_item ->
             case Todos.update_item(todo_item, %{content: item.content}) do
-              {:ok, _} -> {:ok, true}
-              _ -> {:ok, false}
+              {:ok, item_response} -> {:ok, item_response}
+              _ -> {:error, "error! unable to update todo item"}
             end
-          _ -> {:ok, false}
+          _ -> {:error, "error! unable items can be found using the id"}
         end
       end)
     end

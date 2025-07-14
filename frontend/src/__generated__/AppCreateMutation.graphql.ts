@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<87977cbdc4f2ec155644245200506f3b>>
+ * @generated SignedSource<<6ae660d975279f23565ca2d59b602505>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,11 @@ export type AppCreateMutation$variables = {
   content: string;
 };
 export type AppCreateMutation$data = {
-  readonly createTodoItem: boolean;
+  readonly createTodoItem: {
+    readonly content: string;
+    readonly id: string;
+    readonly isCompleted: boolean;
+  };
 };
 export type AppCreateMutation = {
   response: AppCreateMutation$data;
@@ -38,8 +42,33 @@ v1 = [
         "variableName": "content"
       }
     ],
-    "kind": "ScalarField",
+    "concreteType": "TodoItem",
+    "kind": "LinkedField",
     "name": "createTodoItem",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "content",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "isCompleted",
+        "storageKey": null
+      }
+    ],
     "storageKey": null
   }
 ];
@@ -61,16 +90,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "710a7142bc2a1f6b0b3e30cc69a5f773",
+    "cacheID": "3f555ee896d547b65bbda9fdde264509",
     "id": null,
     "metadata": {},
     "name": "AppCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation AppCreateMutation(\n  $content: String!\n) {\n  createTodoItem(content: $content)\n}\n"
+    "text": "mutation AppCreateMutation(\n  $content: String!\n) {\n  createTodoItem(content: $content) {\n    id\n    content\n    isCompleted\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e6268569fe83c562ae20a501eb4a1927";
+(node as any).hash = "f83c814a28c2f764d0067551b26270e4";
 
 export default node;

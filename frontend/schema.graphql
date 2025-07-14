@@ -10,10 +10,10 @@ directive @specifiedBy(
 ) on SCALAR
 
 type RootMutationType {
-  createTodoItem(content: String!): Boolean!
+  createTodoItem(content: String!): TodoItem!
   deleteTodoItem(id: String!): Boolean!
   toggleTodoItem(id: String!): TodoItem!
-  updateTodoItem(content: String!, id: String!): Boolean!
+  updateTodoItem(content: String!, id: String!): TodoItem!
 }
 
 type RootQueryType {
