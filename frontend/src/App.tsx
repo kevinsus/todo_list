@@ -3,6 +3,13 @@ import React from 'react'
 import type { AppQuery } from "./__generated__/AppQuery.graphql";
 import { graphql, useLazyLoadQuery, useMutation } from "react-relay";
 
+// # This schema is used to define the structure of the GraphQL API.
+// # It includes types, queries, and mutations for managing todo items.
+// # How it works:
+// # - `RootQueryType` defines the entry points for reading data.
+// # - `RootMutationType` defines the entry points for modifying data.
+// # when client call 'useMutation' or 'useQuery', it will use the above schema to determine what data to fetch or modify.
+
 import {
   Card,
   // CardAction,
@@ -229,6 +236,32 @@ function App() {
     })
   }
 
+
+  // RELAY -> handle delete all todo
+  const [commitDeleteAllMutation] = useMutation(
+    graphql`
+      mutation AppDeleteAllMutation {
+        deleteAllTodoItem
+      }
+    `
+  )
+  const handleDeleteAllTodo = () => {
+    commitDeleteAllMutation({
+      variables: { },
+      updater: (store) => {
+        const root = store.getRoot();
+        const updatedItems:[] = []
+        root.setLinkedRecords(updatedItems, "todoItems");
+      },
+      onCompleted: () => {
+        console.log("Todo items deleted all successfully")
+      },
+      onError: (error) => {
+        console.log("Error deleting all todo items", error)
+      }
+    })
+  }
+
   return (
     <div className='min-h-screen flex flex-col bg-gray-800 text-white justify-center items-center'>
 
@@ -237,10 +270,13 @@ function App() {
           <CardTitle>Welcome back!</CardTitle>
           <CardDescription>Here's a list of your tasks for this month.</CardDescription>
           {/* <CardAction><Button onClick={() => handleAuthenticate()}>Sign In</Button></CardAction> */}
-          <div className="flex w-full max-w-sm items-center gap-2 mt-5">
-            <Input type="text" placeholder="Insert Todo" ref={contentItemRef} />
+          <div className="flex w-full items-center gap-2 mt-5">
+            <Input type="text" className='w-full' placeholder="Insert Todo" ref={contentItemRef} />
             <Button type="submit" onClick={() => handleCreateTodo()} >
               Add Task
+            </Button>
+            <Button type="submit" onClick={() => handleDeleteAllTodo()} >
+              Delete All
             </Button>
           </div>
         </CardHeader>

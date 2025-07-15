@@ -91,6 +91,17 @@ defmodule TodoListWeb.Api.Schema do
       end)
     end
 
+    # TODO: Delete all todo items
+    field :delete_all_todo_item, non_null(:boolean) do
+      resolve (fn _,_ ->
+        case Todos.delete_all_items do
+          {:ok,_} -> {:ok, true}
+          _ -> {:ok, false}
+        end
+      end)
+    end
+
+
     @doc """
     Updating todo item's completion
 
@@ -112,3 +123,24 @@ defmodule TodoListWeb.Api.Schema do
     end
   end
 end
+
+
+# To convert this scheama to graphql schema, use the following command:
+# mix absinthe.schema.sdl --schema TodoListWeb.Api.schema /path/to/file.graphql
+# Note that you need to run this command in the root directory of the project
+
+# Generated todo_list app
+# ** (ArgumentError) errors were found at the given arguments:
+
+#   * 1st argument: not an already existing atom
+
+#     :erlang.binary_to_existing_atom("Elixir.TodoListWeb.Api.schema", :utf8)
+#     (absinthe 1.7.10) lib/mix/tasks/absinthe.schema.sdl.ex:91: Mix.Tasks.Absinthe.Schema.Sdl.parse_options/1
+#     (absinthe 1.7.10) lib/mix/tasks/absinthe.schema.sdl.ex:50: Mix.Tasks.Absinthe.Schema.Sdl.run/1
+#     (mix 1.18.2) lib/mix/task.ex:495: anonymous fn/3 in Mix.Task.run_task/5
+#     (mix 1.18.2) lib/mix/cli.ex:107: Mix.CLI.run_task/2
+#     /home/kevin/.asdf/installs/elixir/1.18.2-otp-27/bin/mix:2: (file)
+
+# If this error occurs, then you need to add the following line to the `config.exs` file:
+# config :todo_list, TodoListWeb.Api.Schema, schema: TodoListWeb.Api.Schema
+# This will allow the schema to be recognized by the absinthe library and generate the schema correctly

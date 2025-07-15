@@ -114,4 +114,20 @@ defmodule TodoList.Todos do
       %Item{} = item -> update_item(item, %{completed_at: nil})
     end
   end
+
+
+  @doc """
+  deletes all items in list
+
+  3 methods:
+  - Repo.delete_all(schema)                           -> delete all records
+  - Repo.delete_all(from s in schema, where: true)    -> delete all records using specific query
+  - Repo.truncate(schema)                             -> delete table and reset ID
+  """
+  # Using schema to delete all records
+  def delete_all_items do
+    Repo.delete_all(Item)
+    {:ok, true}
+  end
+
 end
