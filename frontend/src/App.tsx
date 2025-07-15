@@ -183,6 +183,7 @@ function App() {
   }
 
   // RELAY -> handle toggle
+  // const [checkedAll, setCheckedAll] = React.useState<Boolean>(false)
   const [commitToggleMutation] = useMutation(
     graphql`
       mutation AppToggleMutation($id: String!) {
@@ -246,11 +247,9 @@ function App() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-100">
-                  <Checkbox />
-                  Lists
+                  {/* <Checkbox className='mr-3 border-gray-600' onCheckedChange={() => setCheckedAll(!checkedAll)} /> */}
+                  TODO LISTS:
                 </TableHead>
-                <TableHead>Edit</TableHead>
-                <TableHead>Delete</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
