@@ -3,6 +3,13 @@ schema {
   mutation: RootMutationType
 }
 
+# This schema is used to define the structure of the GraphQL API.
+# It includes types, queries, and mutations for managing todo items.
+# How it works:
+# - `RootQueryType` defines the entry points for reading data.
+# - `RootMutationType` defines the entry points for modifying data.
+# when client call 'useMutation' or 'useQuery', it will use the above schema to determine what data to fetch or modify.
+
 """Exposes a URL that specifies the behavior of this scalar."""
 directive @specifiedBy(
   """The URL that specifies the behavior of this scalar."""

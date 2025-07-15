@@ -6,8 +6,18 @@ alias TodoList.Todos
 defmodule TodoListWeb.Api.Schema do
   use Absinthe.Schema
 
+  # object :content_todo do
+    # field :content_string, non_null(:string)
+    # field :due_date, non_null(:string)
+  # end
+
   object :todo_item do
     field :id, non_null(:string)
+    # field :content, non_null(:content_todo) do
+    #   resolve (fn item,_,_ ->
+    #     {:ok, %{content_string: item.content, due_date: item.content}}
+    #   end)
+    # end
     field :content, non_null(:string)
     field :is_completed, non_null(:boolean) do
       resolve (fn item, _, _ ->

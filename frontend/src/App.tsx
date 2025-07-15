@@ -67,6 +67,9 @@ function App() {
     const contentItem = contentItemRef.current?.value ?? "";
     
     // commitMutation = interface which allow us to write data to RELAY
+    // Optimistic response = function use to create an immediate "fake data"
+    // Hence updater can imidately update the data, while the mutation is being processed.
+
     commitCreateMutation({
       variables: { content: contentItem },
       optimisticResponse: {
@@ -92,7 +95,6 @@ function App() {
       },
     });
   }
-
 
   // RELAY -> handle Delete
   const [commitDeleteMutation] = useMutation(
