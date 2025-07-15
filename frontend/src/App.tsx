@@ -266,7 +266,7 @@ function App() {
                     </>
                   ) :
                     <>
-                      <TableCell>
+                      <TableCell className='flex justify-center items-center'>
                         <Checkbox
                           defaultChecked={!!item?.isCompleted}
                           onCheckedChange={() => handleToggleTodo(item!)}
@@ -275,8 +275,8 @@ function App() {
                         {item?.content}
                       </TableCell>
                       <TableCell className='flex gap-2'>
-                        <FaRegEdit className='hover: cursor-pointer' onClick={() => handleEditTodo(item!)} />
-                        <MdDelete className='hover: cursor-pointer' onClick={() => handleDeleteTodo(item!)} />
+                        <Button onClick={() => handleEditTodo(item!)}><FaRegEdit/></Button>
+                        <Button onClick={() => handleDeleteTodo(item!)}><MdDelete/></Button>
                       </TableCell>
                     </>
                   }
